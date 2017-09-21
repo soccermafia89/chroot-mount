@@ -2,23 +2,23 @@
 
 - name: Mount Root Volume
   command: /bin/bash -c "mount /dev/{{ root_device_name }} /mnt/"
-  sudo: True
+  become: True
 
 - name: Make Root Directories
   command: /bin/bash -c "mkdir -p /mnt/proc /mnt/etc /mnt/dev /mnt/var /mnt/sys /mnt/tmp /mnt/boot"
-  sudo: True
+  become: True
 
 - name: Mount Boot
   command: /bin/bash -c "mount /dev/{{ boot_device_name }}1 /mnt/boot"
-  sudo: True
+  become: True
 
 - name: Make Second Level Directories
   command: /bin/bash -c "mkdir -p /mnt/var/log /mnt/var/cache /mnt/var/lock/rpm"
-  sudo: True
+  become: True
 
 - name: Make Audit Directory
   command: /bin/bash -c "mkdir -p /mnt/var/log/audit"
-  sudo: True
+  become: True
 
 - name: Unmount Bind Mounts
   mount:
@@ -39,7 +39,7 @@
    - { path: '/mnt/dev/console' }
    - { path: '/mnt/dev/null' }
    - { path: '/mnt/dev/zero' }
-  sudo: True
+  become: True
 
 - name: Setup Chroot Environment
   command: /bin/bash -c "mknod {{ item.path }} c {{ item.major_device_number }} {{ item.minor_device_number }}"
@@ -47,7 +47,7 @@
    - { path: '/mnt/dev/console', major_device_number: '5', minor_device_number: '1' }
    - { path: '/mnt/dev/null', major_device_number: '1', minor_device_number: '3' }
    - { path: '/mnt/dev/zero', major_device_number: '1', minor_device_number: '5' }
-  sudo: True
+  become: True
 
 - name: Setup Bind Mounts
   command: /bin/bash -c "mount -o bind {{ item.host_device }} {{ item.chroot_device }}"
@@ -57,4 +57,4 @@
    - { host_device: "/dev/shm", chroot_device: "/mnt/dev/shm" }
    - { host_device: "/proc", chroot_device: "/mnt/proc" }
    - { host_device: "/sys", chroot_device: "/mnt/sys" }
-  sudo: True
+  become: True
